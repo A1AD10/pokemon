@@ -9,6 +9,12 @@ export default function Filtro({ setFiltroBusca }) {
 
   const theme = useTheme()
 
+  const handleChange = (event) => {
+    const novoValor = event.target.value
+    setValorSelecionado(novoValor)
+    setFiltroBusca(novoValor)
+  };
+
   return(
     <Box>
       <FormControl sx={{ width:'570px',
@@ -18,7 +24,7 @@ export default function Filtro({ setFiltroBusca }) {
       }}>
         <Select
           value={valorSelecionado || ""}
-          onChange={(e) => setFiltroBusca(e.target.value)}
+          onChange={handleChange}
         >
           <MenuItem value="">Todos</MenuItem>
           <MenuItem value="fire">Fogo</MenuItem>
