@@ -194,7 +194,11 @@ export default function PokemonCards() {
                 <Pagination sx={{
                     '& .MuiPaginationItem-root': { fontSize: '15px' },
                     [theme.breakpoints.down('md')]: {
-                        margin: '30px 0'
+                        margin: '30px 0',
+                    },
+
+                    [theme.breakpoints.down('sm')]: {
+                        '& .MuiPaginationItem-root': { fontSize: '10px', margin:'-4px' },
                     }
                 }}
                     count={Math.ceil(totalCards / itensPorPagina)} shape="rounded" page={pagina} onChange={handleChange}
