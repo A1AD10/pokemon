@@ -2,7 +2,7 @@
 
 Aplicação desenvolvida com React e Vite para listar Pokémons consumindo dados da Pokémon TCG API. O app permite busca em tempo real e exibe detalhes visuais e funcionais de cada Pokémon.
 
-![Preview do projeto](./screenshot.png)
+![Preview do projeto](./print_pokemon.png)
 
 ---
 
