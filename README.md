@@ -39,3 +39,26 @@ npm install
 
 # Rode o projeto
 npm run dev
+```
+## 🌐 Link para acesso online
+
+➡️ [pokemon-weld-mu.vercel.app](https://pokemon-weld-mu.vercel.app)
+
+---
+
+## 📌 Observações
+
+Este projeto foi desenvolvido como exercício prático de consumo de API, integração de componentes e responsividade.
+
+Futuras melhorias podem incluir:
+- Detalhes estendidos dos Pokémons
+- Rolagem infinita
+- Animações
+
+---
+
+## 👨‍💻 Desenvolvedor
+
+**Aladio Vanderlei de Lima Junior**  
+🔗 [LinkedIn](https://www.linkedin.com/in/aladio-junior285) | 🌐 [Portfólio](https://meu-portfolio-opal-pi.vercel.app)
+
