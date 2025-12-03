@@ -68,32 +68,30 @@ export default function PokemonCards() {
     const apiKey = '862ea40d-ee22-4d4b-9137-7905835d8970'
 
     useEffect(() => {
-        const requisicaoCards = async () => {
-            try {
+    const requisicaoCards = async () => {
+        try {
 
-                const filtroQuery = filtro ? `q=rarity:${filtro.toLowerCase()}+types:${filtro.toLowerCase()}` : '';
-                const url = filtroQuery ? `${apiUrl}?${filtroQuery}` : apiUrl;
+            const filtroQuery = filtro ? `q=rarity:${filtro.toLowerCase()}+types:${filtro.toLowerCase()}` : '';
+            
+            const url = filtroQuery ? `/api/cards?${filtroQuery}` : '/api/cards';
 
-                const resp = await fetch(url, {
-                    headers: { 'X-Api-Key': apiKey }
-                });
+            const resp = await fetch(url);
 
-                if (resp.status === 200) {
-                    const obj = await resp.json()
-                    setCards(obj.data)
-                    setTotalCards(obj.data.length)
-                } else {
-                    setErro('Erro ao buscar as cartas')
-                }
-
-            } catch (e) {
-                console.error('Erro na requisição:', e)
-                setErro('Erro na requisição')
+            if (resp.status === 200) {
+                const obj = await resp.json()
+                setCards(obj.data)
+                setTotalCards(obj.data.length)
+            } else {
+                setErro('Erro ao buscar as cartas')
             }
-        }
-        requisicaoCards();
-    }, [filtroBusca])
 
+        } catch (e) {
+            console.error('Erro na requisição:', e)
+            setErro('Erro na requisição')
+        }
+    }
+    requisicaoCards();
+}, [filtroBusca])
 
     return (
         <ThemeProvider theme={theme}>
