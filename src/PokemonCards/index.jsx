@@ -76,7 +76,7 @@ export default function PokemonCards() {
                 }
                 // OBS: FiltroBusca (tipo/raridade) seria implementado aqui de forma similar, se necessário.
 
-                const url = `/v2/cards?${queryParams.join('&')}`; // Usando /v2 e parâmetros corretos
+                const url = `https://api.pokemontcg.io/v2/cards?${queryParams.join('&')}`; // Usando /v2 e parâmetros corretos
 
                 // 3. REQUISIÇÃO COM O API KEY NO CABEÇALHO
                 const resp = await fetch(url, {
