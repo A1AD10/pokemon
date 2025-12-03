@@ -1,0 +1,19 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/cards",
+      "destination": "https://api.pokemontcg.io/v2/cards"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    }
+  ]
+}

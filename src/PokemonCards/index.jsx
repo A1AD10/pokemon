@@ -36,6 +36,7 @@ export default function PokemonCards() {
     const [totalCards, setTotalCards] = useState(0)
     const [open, setOpen] = useState(false);
     const [modalCard, setModalCard] = useState(null)
+    const [loading, setLoading] = useState(false); // 1. ADICIONADO: Variável de loading
 
     const itensPorPagina = 20
 
@@ -52,52 +53,70 @@ export default function PokemonCards() {
         setPagina(valor)
     }
 
-    const itemAtual = cards
-        .filter(card => card.name.toLowerCase().includes(buscaNome.toLowerCase()))
-        .filter(card => {
-            if (filtroBusca === '') return true;
-            return (
-                card.types.some(type => type.toLowerCase().includes(filtroBusca.toLowerCase())) ||
-                (card.rarity && card.rarity.toLowerCase().includes(filtroBusca.toLowerCase()))
-            );
-        })
-        .slice((pagina - 1) * itensPorPagina, pagina * itensPorPagina)
+    // 2. REMOVIDO: Bloco `itemAtual` (A filtragem/paginação é feita pela API agora)
+    // Onde era usado `itemAtual`, agora usaremos `cards`
 
-
-    const apiUrl = 'https://api.pokemontcg.io/v2/cards'
     const apiKey = '862ea40d-ee22-4d4b-9137-7905835d8970'
 
-useEffect(() => {
-    const requisicaoCards = async () => {
-        try {
-            const filtroQuery = filtro ? `?q=rarity:${filtro.toLowerCase()}+types:${filtro.toLowerCase()}` : '';
-            const url = `https://api.pokemontcg.io/v2/cards${filtroQuery}`;
+    useEffect(() => {
+        const requisicaoCards = async () => {
+            setLoading(true);
+            setErro(null); // Limpar erro antes de nova requisição
 
-            const resp = await fetch(url, {
-                headers: { 'X-Api-Key': '862ea40d-ee22-4d4b-9137-7905835d8970' }
-            });
+            try {
+                const pageSize = itensPorPagina;
+                const currentPage = pagina;
 
-            if (resp.status === 200) {
-                const obj = await resp.json();
-                setCards(obj.data);
-                setTotalCards(obj.data.length);
-            } else {
-                setErro('Erro ao buscar as cartas');
+                // 3. CONSTRUÇÃO DA URL AJUSTADA
+                const queryParams = [`page=${currentPage}`, `pageSize=${pageSize}`];
+
+                if (buscaNome) {
+                    // Adiciona o filtro de nome para a API. O '*' permite busca parcial.
+                    queryParams.push(`q=name:*${buscaNome}*`);
+                }
+                // OBS: FiltroBusca (tipo/raridade) seria implementado aqui de forma similar, se necessário.
+
+                const url = `/v2/cards?${queryParams.join('&')}`; // Usando /v2 e parâmetros corretos
+
+                // 3. REQUISIÇÃO COM O API KEY NO CABEÇALHO
+                const resp = await fetch(url, {
+                    headers: {
+                        'X-Api-Key': apiKey, // 🚨 ESSENCIAL: Key deve ir no header
+                    }
+                });
+
+                if (resp.status === 200) {
+                    const obj = await resp.json();
+
+                    setCards(obj.data);
+                    setTotalCards(obj.totalCount);
+                } else {
+                    setErro(`Erro ${resp.status}: Não foi possível buscar as cartas.`);
+                }
+
+            } catch (e) {
+                console.error('Erro na requisição:', e);
+                setErro('Erro de rede na requisição');
+            } finally {
+                setLoading(false);
             }
+        };
 
-        } catch (e) {
-            console.error('Erro na requisição:', e);
-            setErro('Erro na requisição');
-        }
-    };
+        requisicaoCards();
 
-    requisicaoCards();
-}, [filtroBusca]);
+        // 3. DEPENDÊNCIA ATUALIZADA: `buscaNome` aciona nova busca
+    }, [apiKey, pagina, itensPorPagina, buscaNome]);
 
 
     return (
         <ThemeProvider theme={theme}>
             <Pesquisa setBuscaNome={setBuscaNome} setFiltroBusca={setFiltroBusca} totalCards={totalCards} />
+
+            {/* Opcional: Mostrar erro se houver */}
+            {erro && <Typography color="error" align="center" variant="h6">{erro}</Typography>}
+
+            {/* Opcional: Mostrar Loading */}
+            {loading && <Typography align="center">Carregando Cartas...</Typography>}
 
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Box component="ul"
@@ -110,7 +129,7 @@ useEffect(() => {
                             gap: '5px',
                         }
                     }}>
-                    {itemAtual.map((card) => (
+                    {cards.map((card) => ( // 2. AJUSTADO: Usando 'cards' diretamente
                         <li key={card.id} style={{ margin: '10px' }}>
                             <Cards card={card} handleOpen={handleOpen} />
                         </li>
@@ -118,6 +137,7 @@ useEffect(() => {
                 </Box>
             </Box>
 
+            {/* O Modal continua inalterado */}
             <Box>
                 <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description"
                     sx={{
@@ -163,7 +183,7 @@ useEffect(() => {
                                             width: '60%',
                                             height: 'auto'
                                         }
-                                    }}/>
+                                    }} />
 
                                 <Box sx={{
                                     display: 'flex', margin: '3rem 0',
@@ -198,14 +218,13 @@ useEffect(() => {
                     },
 
                     [theme.breakpoints.down('sm')]: {
-                        '& .MuiPaginationItem-root': { fontSize: '10px', margin:'-4px' },
+                        '& .MuiPaginationItem-root': { fontSize: '10px', margin: '-4px' },
                     }
                 }}
                     count={Math.ceil(totalCards / itensPorPagina)} shape="rounded" page={pagina} onChange={handleChange}
                 />
             </Box>
-            
+
         </ThemeProvider>
     )
 }
-
