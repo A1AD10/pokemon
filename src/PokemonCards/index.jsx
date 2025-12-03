@@ -67,31 +67,33 @@ export default function PokemonCards() {
     const apiUrl = 'https://api.pokemontcg.io/v2/cards'
     const apiKey = '862ea40d-ee22-4d4b-9137-7905835d8970'
 
-    useEffect(() => {
+useEffect(() => {
     const requisicaoCards = async () => {
         try {
+            const filtroQuery = filtro ? `?q=rarity:${filtro.toLowerCase()}+types:${filtro.toLowerCase()}` : '';
+            const url = `https://api.pokemontcg.io/v2/cards${filtroQuery}`;
 
-            const filtroQuery = filtro ? `q=rarity:${filtro.toLowerCase()}+types:${filtro.toLowerCase()}` : '';
-            
-            const url = filtroQuery ? `/api/cards?${filtroQuery}` : '/api/cards';
-
-            const resp = await fetch(url);
+            const resp = await fetch(url, {
+                headers: { 'X-Api-Key': '862ea40d-ee22-4d4b-9137-7905835d8970' }
+            });
 
             if (resp.status === 200) {
-                const obj = await resp.json()
-                setCards(obj.data)
-                setTotalCards(obj.data.length)
+                const obj = await resp.json();
+                setCards(obj.data);
+                setTotalCards(obj.data.length);
             } else {
-                setErro('Erro ao buscar as cartas')
+                setErro('Erro ao buscar as cartas');
             }
 
         } catch (e) {
-            console.error('Erro na requisição:', e)
-            setErro('Erro na requisição')
+            console.error('Erro na requisição:', e);
+            setErro('Erro na requisição');
         }
-    }
+    };
+
     requisicaoCards();
-}, [filtroBusca])
+}, [filtroBusca]);
+
 
     return (
         <ThemeProvider theme={theme}>
